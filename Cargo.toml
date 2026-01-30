@@ -40,3 +40,21 @@ crossbeam-channel = "0.5.15"
 [[bin]]
 name = "clashtui"
 path = "src/main.rs"
+
+[package.metadata.deb]
+maintainer = "ClashTUI Contributors"
+depends = "$auto"
+section = "utils"
+priority = "optional"
+assets = [
+  ["target/release/clashtui", "usr/bin/", "755"],
+  ["README.md", "usr/share/doc/clashtui/README.md", "644"],
+  ["LICENSE", "usr/share/doc/clashtui/LICENSE", "644"],
+]
+
+[package.metadata.generate-rpm]
+assets = [
+  { source = "target/release/clashtui", dest = "/usr/bin/clashtui", mode = "755" },
+  { source = "README.md", dest = "/usr/share/doc/clashtui/README.md", mode = "644", doc = true },
+  { source = "LICENSE", dest = "/usr/share/doc/clashtui/LICENSE", mode = "644", doc = true },
+]
