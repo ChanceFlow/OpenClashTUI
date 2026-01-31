@@ -249,17 +249,27 @@ jobs:
           apt-ftparchive release "${REPO_ROOT}/dists/${DIST}" > "${REPO_ROOT}/dists/${DIST}/Release"
 
       - name: Sign apt repo (optional)
-        if: ${{ secrets.APT_GPG_PRIVATE_KEY != '' }}
         shell: bash
+        env:
+          APT_GPG_PRIVATE_KEY: ${{ secrets.APT_GPG_PRIVATE_KEY }}
+          APT_GPG_PASSPHRASE: ${{ secrets.APT_GPG_PASSPHRASE }}
         run: |
           set -euo pipefail
+          if [[ -z "${APT_GPG_PRIVATE_KEY:-}" ]]; then
+            echo "APT_GPG_PRIVATE_KEY is not set, skipping signing."
+            exit 0
+          fi
+          PASSPHRASE_ARGS=()
+          if [[ -n "${APT_GPG_PASSPHRASE:-}" ]]; then
+            PASSPHRASE_ARGS=(--pinentry-mode loopback --passphrase "${APT_GPG_PASSPHRASE}")
+          fi
           DIST="stable"
           REPO_ROOT="apt-repo"
-          echo "${{ secrets.APT_GPG_PRIVATE_KEY }}" | gpg --batch --import
+          echo "${APT_GPG_PRIVATE_KEY}" | gpg --batch --import
           KEY_ID="$(gpg --list-keys --with-colons | awk -F: '/^pub/ {print $5; exit}')"
-          gpg --batch --yes --pinentry-mode loopback --passphrase "${{ secrets.APT_GPG_PASSPHRASE }}" \
+          gpg --batch --yes "${PASSPHRASE_ARGS[@]}" \
             -abs -o "${REPO_ROOT}/dists/${DIST}/Release.gpg" "${REPO_ROOT}/dists/${DIST}/Release"
-          gpg --batch --yes --pinentry-mode loopback --passphrase "${{ secrets.APT_GPG_PASSPHRASE }}" \
+          gpg --batch --yes "${PASSPHRASE_ARGS[@]}" \
             --clearsign -o "${REPO_ROOT}/dists/${DIST}/InRelease" "${REPO_ROOT}/dists/${DIST}/Release"
           gpg --batch --armor --export "${KEY_ID}" > "${REPO_ROOT}/KEY.gpg"
 
