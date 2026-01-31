@@ -15,16 +15,14 @@
 ### Homebrew（macOS / Linux）
 
 ```bash
-brew tap <OWNER>/ClashTUI
+brew tap ChanceFlow/ClashTUI
 brew install clashtui
 ```
-
-将 `<OWNER>` 替换为你的 GitHub 用户名或组织名。
 
 ### APT（Debian / Ubuntu）
 
 ```bash
-echo "deb [trusted=yes] https://<OWNER>.github.io/ClashTUI/apt stable main" | sudo tee /etc/apt/sources.list.d/clashtui.list
+echo "deb [trusted=yes] https://ChanceFlow.github.io/ClashTUI/apt stable main" | sudo tee /etc/apt/sources.list.d/clashtui.list
 sudo apt update
 sudo apt install clashtui
 ```
@@ -32,8 +30,8 @@ sudo apt install clashtui
 如果你启用了 GPG 签名（推荐），可以改用：
 
 ```bash
-curl -fsSL https://<OWNER>.github.io/ClashTUI/apt/KEY.gpg | sudo gpg --dearmor -o /usr/share/keyrings/clashtui.gpg
-echo "deb [signed-by=/usr/share/keyrings/clashtui.gpg] https://<OWNER>.github.io/ClashTUI/apt stable main" | sudo tee /etc/apt/sources.list.d/clashtui.list
+curl -fsSL https://ChanceFlow.github.io/ClashTUI/apt/KEY.gpg | sudo gpg --dearmor -o /usr/share/keyrings/clashtui.gpg
+echo "deb [signed-by=/usr/share/keyrings/clashtui.gpg] https://ChanceFlow.github.io/ClashTUI/apt stable main" | sudo tee /etc/apt/sources.list.d/clashtui.list
 sudo apt update
 sudo apt install clashtui
 ```
