@@ -1,14 +1,14 @@
 Package: clashtui
-Version: 0.1.4-1
+Version: 0.1.6-1
 Architecture: arm64
 Maintainer: ClashTUI Contributors
 Installed-Size: 6779
 Depends: libc6, libgcc-s1
-Filename: apt-repo/pool/main/clashtui_0.1.4-1_arm64.deb
-Size: 1844404
-MD5sum: 099615e997def45fb98f113acfdbe263
-SHA1: af12476e9d271c139dd150560b403098476a8084
-SHA256: 071d213352041506e5f72868f92c6ae3ed7b2170040a0d11e88e3e8dbb67e685
+Filename: pool/main/clashtui_0.1.6-1_arm64.deb
+Size: 1844112
+MD5sum: 8fcdeda783894c5ddc247cf4699c059d
+SHA1: 551bdc961d083cc2c1a5278b1741c0a20a365121
+SHA256: 40b1b11d5708b926a01c2a473f1bf0406096a1c4fbf87b1b736eb24c46fafa01
 Section: utils
 Priority: optional
 Description: A TUI tool for managing Clash proxies and rules
@@ -30,28 +30,27 @@ Description: A TUI tool for managing Clash proxies and rules
  ### Homebrew（macOS / Linux）
  .
  ```bash
- brew tap <OWNER>/ClashTUI
+ brew tap ChanceFlow/OpenClashTUI
  brew install clashtui
  ```
- .
- 将 `<OWNER>` 替换为你的 GitHub 用户名或组织名。
  .
  ### APT（Debian / Ubuntu）
  .
  ```bash
- echo "deb [trusted=yes] https://<OWNER>.github.io/ClashTUI/apt stable main" |
- sudo tee /etc/apt/sources.list.d/clashtui.list
+ echo "deb [trusted=yes] https://ChanceFlow.github.io/OpenClashTUI/apt stable
+ main" | sudo tee /etc/apt/sources.list.d/clashtui.list
  sudo apt update
  sudo apt install clashtui
  ```
  .
- 如果你启用了 GPG 签名（推荐），可以改用：
+ 如果你启用了 GPG 签名（推荐，需在 Actions
+ 配置密钥），可以改用：
  .
  ```bash
- curl -fsSL https://<OWNER>.github.io/ClashTUI/apt/KEY.gpg | sudo gpg --dearmor
- -o /usr/share/keyrings/clashtui.gpg
+ curl -fsSL https://ChanceFlow.github.io/OpenClashTUI/apt/KEY.gpg | sudo gpg
+ --dearmor -o /usr/share/keyrings/clashtui.gpg
  echo "deb [signed-by=/usr/share/keyrings/clashtui.gpg]
- https://<OWNER>.github.io/ClashTUI/apt stable main" | sudo tee
+ https://ChanceFlow.github.io/OpenClashTUI/apt stable main" | sudo tee
  /etc/apt/sources.list.d/clashtui.list
  sudo apt update
  sudo apt install clashtui
