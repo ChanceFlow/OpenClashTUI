@@ -254,8 +254,9 @@ jobs:
           mkdir -p "${POOL_DIR}"
           shopt -s globstar
           cp apt-artifacts/**/*.deb "${POOL_DIR}/"
-          ARCHES="$(for deb in "${POOL_DIR}"/*.deb; do dpkg-deb -f "${deb}" Architecture; done | sort -u)"
-          for arch in ${ARCHES}; do
+          readarray -t ARCHES_LIST < <(for deb in "${POOL_DIR}"/*.deb; do dpkg-deb -f "${deb}" Architecture; done | sort -u)
+          ARCHES="${ARCHES_LIST[*]}"
+          for arch in "${ARCHES_LIST[@]}"; do
             BIN_DIR="${REPO_ROOT}/dists/${DIST}/main/binary-${arch}"
             mkdir -p "${BIN_DIR}"
             (
