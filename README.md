@@ -15,23 +15,23 @@
 ### Homebrew（macOS / Linux）
 
 ```bash
-brew tap ChanceFlow/ClashTUI
+brew tap ChanceFlow/OpenClashTUI
 brew install clashtui
 ```
 
 ### APT（Debian / Ubuntu）
 
 ```bash
-echo "deb [trusted=yes] https://ChanceFlow.github.io/ClashTUI/apt stable main" | sudo tee /etc/apt/sources.list.d/clashtui.list
+echo "deb [trusted=yes] https://ChanceFlow.github.io/OpenClashTUI/apt stable main" | sudo tee /etc/apt/sources.list.d/clashtui.list
 sudo apt update
 sudo apt install clashtui
 ```
 
-如果你启用了 GPG 签名（推荐），可以改用：
+如果你启用了 GPG 签名（推荐，需在 Actions 配置密钥），可以改用：
 
 ```bash
-curl -fsSL https://ChanceFlow.github.io/ClashTUI/apt/KEY.gpg | sudo gpg --dearmor -o /usr/share/keyrings/clashtui.gpg
-echo "deb [signed-by=/usr/share/keyrings/clashtui.gpg] https://ChanceFlow.github.io/ClashTUI/apt stable main" | sudo tee /etc/apt/sources.list.d/clashtui.list
+curl -fsSL https://ChanceFlow.github.io/OpenClashTUI/apt/KEY.gpg | sudo gpg --dearmor -o /usr/share/keyrings/clashtui.gpg
+echo "deb [signed-by=/usr/share/keyrings/clashtui.gpg] https://ChanceFlow.github.io/OpenClashTUI/apt stable main" | sudo tee /etc/apt/sources.list.d/clashtui.list
 sudo apt update
 sudo apt install clashtui
 ```

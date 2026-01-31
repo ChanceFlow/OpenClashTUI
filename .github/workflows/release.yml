@@ -258,10 +258,24 @@ jobs:
           for arch in ${ARCHES}; do
             BIN_DIR="${REPO_ROOT}/dists/${DIST}/main/binary-${arch}"
             mkdir -p "${BIN_DIR}"
-            dpkg-scanpackages -a "${arch}" "${POOL_DIR}" /dev/null > "${BIN_DIR}/Packages"
+            (
+              cd "${REPO_ROOT}"
+              dpkg-scanpackages -a "${arch}" "pool/main" /dev/null > "dists/${DIST}/main/binary-${arch}/Packages"
+            )
             gzip -9c "${BIN_DIR}/Packages" > "${BIN_DIR}/Packages.gz"
           done
-          apt-ftparchive release "${REPO_ROOT}/dists/${DIST}" > "${REPO_ROOT}/dists/${DIST}/Release"
+          cat > "${REPO_ROOT}/apt-ftparchive.conf" <<EOF
+          APT::FTPArchive::Release {
+            Origin "ClashTUI";
+            Label "ClashTUI";
+            Suite "${DIST}";
+            Codename "${DIST}";
+            Architectures "${ARCHES}";
+            Components "main";
+            Description "ClashTUI APT repository";
+          };
+          EOF
+          apt-ftparchive -c "${REPO_ROOT}/apt-ftparchive.conf" release "${REPO_ROOT}/dists/${DIST}" > "${REPO_ROOT}/dists/${DIST}/Release"
 
       - name: Sign apt repo (optional)
         shell: bash

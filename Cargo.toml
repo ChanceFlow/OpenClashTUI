@@ -1,6 +1,6 @@
 [package]
 name = "clashtui"
-version = "0.1.4"
+version = "0.1.5"
 edition = "2021"
 description = "A TUI tool for managing Clash proxies and rules"
 authors = ["ClashTUI Contributors"]
