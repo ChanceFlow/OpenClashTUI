@@ -1,6 +1,6 @@
 [package]
 name = "clashtui"
-version = "0.1.3"
+version = "0.1.4"
 edition = "2021"
 description = "A TUI tool for managing Clash proxies and rules"
 authors = ["ClashTUI Contributors"]
@@ -51,6 +51,14 @@ assets = [
   ["README.md", "usr/share/doc/clashtui/README.md", "644"],
   ["LICENSE", "usr/share/doc/clashtui/LICENSE", "644"],
 ]
+
+[package.metadata.deb.variants.arm64]
+name = "clashtui"
+depends = ["libc6", "libgcc-s1"]
+
+[package.metadata.deb.variants.armv7]
+name = "clashtui"
+depends = ["libc6", "libgcc-s1"]
 
 [package.metadata.generate-rpm]
 assets = [
