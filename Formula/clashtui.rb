@@ -1,28 +1,28 @@
 class Clashtui < Formula
   desc "A TUI tool for managing Clash proxies and rules"
   homepage "https://github.com/ChanceFlow/OpenClashTUI"
-  version "0.1.5"
+  version "0.1.6"
   license "MIT"
 
   on_macos do
     if Hardware::CPU.intel?
-      url "https://github.com/ChanceFlow/OpenClashTUI/releases/download/v0.1.5/clashtui-0.1.5-x86_64-apple-darwin.tar.gz"
-      sha256 "7aac0b83fe3c00caa5c3368d7a09ab94cfe2ed311fd9aa9367e8a457a7c3bb2f"
+      url "https://github.com/ChanceFlow/OpenClashTUI/releases/download/v0.1.6/clashtui-0.1.6-x86_64-apple-darwin.tar.gz"
+      sha256 "73669a2bb69be53a9f8b4dc334c2c80cebe734ae754cf87f96a4be1450e2044a"
     end
     if Hardware::CPU.arm?
-      url "https://github.com/ChanceFlow/OpenClashTUI/releases/download/v0.1.5/clashtui-0.1.5-aarch64-apple-darwin.tar.gz"
-      sha256 "0836c0907c39f719e19207fa62c6d5916eaeb4c42a69ceecbd85699cc6db4ab6"
+      url "https://github.com/ChanceFlow/OpenClashTUI/releases/download/v0.1.6/clashtui-0.1.6-aarch64-apple-darwin.tar.gz"
+      sha256 "028368b0e227463c1e1c1a46b9b40f4043d5c848b9e8fc94e6f18060143bbd9c"
     end
   end
 
   on_linux do
     if Hardware::CPU.intel?
-      url "https://github.com/ChanceFlow/OpenClashTUI/releases/download/v0.1.5/clashtui-0.1.5-x86_64-unknown-linux-gnu.tar.gz"
-      sha256 "b519b1a4c9bad494a39759f201e072e0c5aee451619e2928f7e606f1cd9a753c"
+      url "https://github.com/ChanceFlow/OpenClashTUI/releases/download/v0.1.6/clashtui-0.1.6-x86_64-unknown-linux-gnu.tar.gz"
+      sha256 "c5be38f2f3b9007551cdc846f0669db7923db0206ad9bcbc77d815794335a79c"
     end
     if Hardware::CPU.arm?
-      url "https://github.com/ChanceFlow/OpenClashTUI/releases/download/v0.1.5/clashtui-0.1.5-aarch64-unknown-linux-gnu.tar.gz"
-      sha256 "f9532df6db19b205eb384b16f87a1061fa2aa217b4f30501212ef30c417da0b8"
+      url "https://github.com/ChanceFlow/OpenClashTUI/releases/download/v0.1.6/clashtui-0.1.6-aarch64-unknown-linux-gnu.tar.gz"
+      sha256 "33eeae79ff6db29a8ea268e556331bd05317c7868a7832b2c1e564184a95fccd"
     end
   end
 
