@@ -110,6 +110,9 @@ clashtui proxies
 
 # 列出所有规则
 clashtui rules
+
+# 刷新订阅（Proxy/Rule Providers）
+clashtui refresh
 ```
 
 ## ⌨️ 快捷键
@@ -136,6 +139,7 @@ ClashTUI 提供了直观的快捷键系统，支持 Vim 风格导航。
 | `Enter` | 选择 / 确认 | 选中当前代理节点 |
 | `t` | 测试延迟 | 测试当前选中节点的延迟 (URL-Test) |
 | `r` | 刷新 | 刷新当前列表数据 |
+| `u` | 刷新订阅 | 刷新 Clash 的 Proxy/Rule Providers |
 | `m` | 切换模式 | 在 Rule / Global / Direct 模式间循环切换 |
 | `?` | 帮助 | 显示/隐藏快捷键帮助菜单 |
 | `q` / `Esc` | 退出 | 退出程序或关闭当前弹窗 |

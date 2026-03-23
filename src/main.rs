@@ -15,7 +15,6 @@ use ratatui::{
 };
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, io, thread, time::Duration};
-use tungstenite::client::IntoClientRequest;
 use tungstenite::connect;
 
 // ============================================================================
@@ -50,6 +49,8 @@ enum Commands {
     Version,
     /// Interactive TUI mode (default)
     Tui,
+    /// Refresh subscriptions (proxy/rule providers)
+    Refresh,
 }
 
 // ============================================================================
@@ -159,6 +160,11 @@ struct ConfigResponse {
 #[derive(Debug, Serialize)]
 struct UpdateConfigRequest {
     mode: String,
+}
+
+#[derive(Debug, Deserialize)]
+struct ProvidersResponse {
+    providers: HashMap<String, serde_json::Value>,
 }
 
 // ============================================================================
@@ -284,6 +290,48 @@ impl ClashClient {
             .json(&req)
             .send()
             .context("Failed to update config")?;
+        Ok(())
+    }
+
+    fn get_proxy_provider_names(&self) -> Result<Vec<String>> {
+        let resp = self
+            .request(reqwest::Method::GET, "/providers/proxies")
+            .send()
+            .context("Failed to fetch proxy providers")?
+            .json::<ProvidersResponse>()
+            .context("Failed to parse proxy providers response")?;
+
+        let mut names: Vec<String> = resp.providers.keys().cloned().collect();
+        names.sort();
+        Ok(names)
+    }
+
+    fn get_rule_provider_names(&self) -> Result<Vec<String>> {
+        let resp = self
+            .request(reqwest::Method::GET, "/providers/rules")
+            .send()
+            .context("Failed to fetch rule providers")?
+            .json::<ProvidersResponse>()
+            .context("Failed to parse rule providers response")?;
+
+        let mut names: Vec<String> = resp.providers.keys().cloned().collect();
+        names.sort();
+        Ok(names)
+    }
+
+    fn update_proxy_provider(&self, provider_name: &str) -> Result<()> {
+        let endpoint = format!("/providers/proxies/{}", urlencoding::encode(provider_name));
+        self.request(reqwest::Method::PUT, &endpoint)
+            .send()
+            .with_context(|| format!("Failed to update proxy provider {}", provider_name))?;
+        Ok(())
+    }
+
+    fn update_rule_provider(&self, provider_name: &str) -> Result<()> {
+        let endpoint = format!("/providers/rules/{}", urlencoding::encode(provider_name));
+        self.request(reqwest::Method::PUT, &endpoint)
+            .send()
+            .with_context(|| format!("Failed to update rule provider {}", provider_name))?;
         Ok(())
     }
 }
@@ -517,6 +565,48 @@ impl App {
         }
     }
 
+    fn refresh_subscriptions(&mut self) {
+        let mut updated_count: usize = 0;
+        let mut failed_items: Vec<String> = Vec::new();
+
+        match self.client.get_proxy_provider_names() {
+            Ok(provider_names) => {
+                for provider_name in provider_names {
+                    if let Err(err) = self.client.update_proxy_provider(&provider_name) {
+                        failed_items.push(format!("proxy:{} ({})", provider_name, err));
+                    } else {
+                        updated_count += 1;
+                    }
+                }
+            }
+            Err(err) => failed_items.push(format!("proxy providers list ({})", err)),
+        }
+
+        match self.client.get_rule_provider_names() {
+            Ok(provider_names) => {
+                for provider_name in provider_names {
+                    if let Err(err) = self.client.update_rule_provider(&provider_name) {
+                        failed_items.push(format!("rule:{} ({})", provider_name, err));
+                    } else {
+                        updated_count += 1;
+                    }
+                }
+            }
+            Err(err) => failed_items.push(format!("rule providers list ({})", err)),
+        }
+
+        self.refresh_data();
+        if failed_items.is_empty() {
+            self.status = format!("Subscriptions refreshed: {} provider(s)", updated_count);
+        } else {
+            self.status = format!(
+                "Refreshed {} provider(s), {} error(s)",
+                updated_count,
+                failed_items.len()
+            );
+        }
+    }
+
     #[allow(dead_code)]
     fn next_tab(&mut self) {
         self.current_tab = match self.current_tab {
@@ -676,6 +766,8 @@ fn ui(f: &mut Frame, app: &mut App) {
             Span::raw("Refresh "),
             Span::styled(" m ", Style::default().fg(Color::Cyan)),
             Span::raw("Mode "),
+            Span::styled(" u ", Style::default().fg(Color::Cyan)),
+            Span::raw("Refresh Subs "),
             Span::styled(" Tab ", Style::default().fg(Color::Cyan)),
             Span::raw("Switch Focus "),
         ]),
@@ -939,6 +1031,7 @@ fn render_help_popup(f: &mut Frame) {
         "  Enter     Select proxy",
         "  t         Test delay for selected proxy",
         "  m         Switch mode (Rule/Global/Direct)",
+        "  u         Refresh subscriptions",
         "  r         Refresh data",
         "",
         "  General",
@@ -1080,6 +1173,37 @@ fn main() -> Result<()> {
             let resp = client.get_version()?;
             println!("Clash version: {}", resp.version);
         }
+        Some(Commands::Refresh) => {
+            let proxy_provider_names = client.get_proxy_provider_names().unwrap_or_default();
+            let rule_provider_names = client.get_rule_provider_names().unwrap_or_default();
+
+            let mut updated_count: usize = 0;
+            let mut failed_items: Vec<String> = Vec::new();
+
+            for provider_name in proxy_provider_names {
+                if let Err(err) = client.update_proxy_provider(&provider_name) {
+                    failed_items.push(format!("proxy:{} ({})", provider_name, err));
+                } else {
+                    updated_count += 1;
+                }
+            }
+
+            for provider_name in rule_provider_names {
+                if let Err(err) = client.update_rule_provider(&provider_name) {
+                    failed_items.push(format!("rule:{} ({})", provider_name, err));
+                } else {
+                    updated_count += 1;
+                }
+            }
+
+            println!("Refreshed {} provider(s)", updated_count);
+            if !failed_items.is_empty() {
+                println!("Errors ({}):", failed_items.len());
+                for item in failed_items {
+                    println!("  - {}", item);
+                }
+            }
+        }
         Some(Commands::Tui) | None => {
             run_tui(client, traffic_rx)?;
         }
@@ -1199,6 +1323,13 @@ fn run_tui(client: ClashClient, traffic_rx: crossbeam_channel::Receiver<Traffic>
                                 continue;
                             }
                             app.toggle_mode();
+                        }
+                        KeyCode::Char('u') => {
+                            if app.show_help {
+                                continue;
+                            }
+                            app.status = "Refreshing subscriptions...".to_string();
+                            app.refresh_subscriptions();
                         }
                         _ => {}
                     }
